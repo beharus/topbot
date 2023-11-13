@@ -4,9 +4,8 @@
   "description": "",
   "main": "users.js",
   "scripts": {
-    "start": "nodemon admin.js",
-    "user": "nodemon users.js",
-    "dev": "json-server --watch db.json"
+    "combined": "concurrently \"nodemon admin.js\" \"nodemon users.js\" \"json-server --watch db.json\"",
+    "start": "npm run combined"
   },
   "author": "",
   "license": "ISC",
@@ -16,6 +15,7 @@
     "node-telegram-bot-api": "^0.64.0"
   },
   "devDependencies": {
+    "concurrently": "^8.2.2",
     "nodemon": "^3.0.1"
   }
 }
