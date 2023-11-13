@@ -4,9 +4,7 @@
   "description": "",
   "main": "users.js",
   "scripts": {
-    "start": "nodemon admin.js",
-    "user": "nodemon users.js",
-    "dev": "json-server --watch db.json"
+    "start": "./start.sh"
   },
   "author": "",
   "license": "ISC",
