@@ -2,10 +2,10 @@
   "name": "project2",
   "version": "1.0.0",
   "description": "",
-  "main": "users.js",
+  "main": "admin.js",
   "scripts": {
-    "build": "node users.js && json-server --watch db.json",
-    "dev": "node admin.js && json-server --watch db.json"
+    "build": "node admin.js && json-server --watch db.json",
+    "start": "nodemon admin.js && json-server --watch db.json"
   },
   "author": "",
   "license": "ISC",

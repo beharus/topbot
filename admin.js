@@ -1,9 +1,23 @@
 const TelegramBot = require('node-telegram-bot-api');
 require('dotenv').config();
-const TOKEN = process.env.TOKEN1;
+const TOKEN1 = process.env.TOKEN1;
+const TOKEN2 = process.env.TOKEN;
 
-const bot = new TelegramBot(TOKEN, {
-  polling: true
+const bot1 = new TelegramBot(TOKEN1, {
+  polling: {
+    interval: 500,
+    params: {
+      timeout: 1
+    }
+  }
+});
+const bot2 = new TelegramBot(TOKEN2, {
+  polling: {
+    interval: 500,
+    params: {
+      timeout: 1
+    }
+  }
 });
 
 let url = '';
@@ -15,7 +29,7 @@ let genre = '';
 let year = '';
 let code = null;
 
-bot.onText(/\/start/, (msg) => {
+bot1.onText(/\/start/, (msg) => {
   let a
   fetch('http://localhost:3000/movies').then(res => res.json()).then(data => a = data)
   console.log(a);
@@ -26,18 +40,18 @@ bot.onText(/\/start/, (msg) => {
 
 YouTube`;
 
-  bot.sendMessage(id, html, {
+  bot1.sendMessage(id, html, {
     parse_mode: 'HTML',
     disable_web_page_preview: true
   });
 });
 
-bot.onText(/\/admin/, (msg) => {
+bot1.onText(/\/admin/, (msg) => {
   const id = msg.chat.id;
   const message_id = msg.message_id;
 
   const text = 'Hello, Admin.\nWhat are we going to do? ';
-  bot.sendMessage(id, text, {
+  bot1.sendMessage(id, text, {
     parse_mode: 'Markdown',
     reply_markup: {
       keyboard: [
@@ -55,9 +69,9 @@ bot.onText(/\/admin/, (msg) => {
 
 function addNewMovie(chatId, code, url, imgPreview, title, lang, country, genre, year) {
 
-  bot.sendMessage(chatId, `The movie has been added with the code "${code}".`, { parse_mode: 'Markdown' });
+  bot1.sendMessage(chatId, `The movie has been added with the code "${code}".`, { parse_mode: 'Markdown' });
 
-  bot.sendPhoto(chatId, imgPreview, {
+  bot1.sendPhoto(chatId, imgPreview, {
     caption: `*🎬Movie Title: ${title.toUpperCase()}
 ______________________
 🇬🇧Language: ${lang.charAt(0).toUpperCase() + lang.slice(1).toLowerCase()};
@@ -78,7 +92,7 @@ ______________________
     disable_web_page_preview: true,
   });
 
-  bot.sendMessage(chatId, 'Is everything OK?\nDo you want to change anything?', {
+  bot1.sendMessage(chatId, 'Is everything OK?\nDo you want to change anything?', {
     reply_markup: {
       keyboard: [
         [
@@ -90,7 +104,7 @@ ______________________
       resize_keyboard: true
     }
   });
-  bot.on('message', async (msg) => {
+  bot1.on('message', async (msg) => {
     switch (msg.text) {
       case '🗣No, post it to the public':
         try {
@@ -108,7 +122,7 @@ ______________________
 
           if (codeExists) {
             // If the code already exists, send a message to change the code
-            bot.sendMessage(chatId, 'Ops! The code is the same as one of the other movies.\nPlease change it :(', {
+            bot1.sendMessage(chatId, 'Ops! The code is the same as one of the other movies.\nPlease change it :(', {
               reply_markup: {
                 inline_keyboard: [
                   [
@@ -134,7 +148,7 @@ ______________________
             const postData = await postResponse.json();
 
             // Send success message to the user
-            bot.sendMessage(msg.message.chat.id, `You have successfully posted a new movie:\n<pre>${JSON.stringify(movie, null, 4)}</pre>`, {
+            bot1.sendMessage(msg.message.chat.id, `You have successfully posted a new movie:\n<pre>${JSON.stringify(movie, null, 4)}</pre>`, {
               parse_mode: 'HTML',
             });
 
@@ -142,7 +156,7 @@ ______________________
           }
         } catch (error) {
           console.error('Error:', error);
-          bot.sendMessage(msg.message.chat.id, `Error posting the movie: ${error.message}`);
+          bot1.sendMessage(msg.message.chat.id, `Error posting the movie: ${error.message}`);
         }
         break;
       default:
@@ -151,68 +165,68 @@ ______________________
   });
 }
 
-bot.on('message', (msg) => {
+bot1.on('message', (msg) => {
   if (msg.text === '📽 add new movie') {
     const chatId = msg.chat.id;
-    bot.sendMessage(chatId, '*Enter the movie URL:*', {
+    bot1.sendMessage(chatId, '*Enter the movie URL:*', {
       parse_mode: 'Markdown',
       reply_markup: {
         remove_keyboard: true
       }
     });
-    bot.once('message', (msgUrl) => {
+    bot1.once('message', (msgUrl) => {
       if (chatId === msgUrl.chat.id) {
         url = msgUrl.text;
         const urlChatId = msgUrl.chat.id;
-        bot.sendMessage(msgUrl.chat.id, '*Enter the image URL for preview of the movie:*', { parse_mode: 'Markdown' });
+        bot1.sendMessage(msgUrl.chat.id, '*Enter the image URL for preview of the movie:*', { parse_mode: 'Markdown' });
 
-        bot.once('message', (msgImgPreview) => {
+        bot1.once('message', (msgImgPreview) => {
           if (urlChatId === msgImgPreview.chat.id) {
             imgPreview = msgImgPreview.text;
             const imgChatId = msgImgPreview.chat.id;
-            bot.sendMessage(msgImgPreview.chat.id, '*Enter the title of the movie:*', { parse_mode: 'Markdown' });
+            bot1.sendMessage(msgImgPreview.chat.id, '*Enter the title of the movie:*', { parse_mode: 'Markdown' });
 
-            bot.once('message', (msgtitle) => {
+            bot1.once('message', (msgtitle) => {
               if (imgChatId === msgtitle.chat.id) {
                 title = msgtitle.text;
                 const titleChatId = msgtitle.chat.id;
-                bot.sendMessage(msgtitle.chat.id, '*Enter the language of the movie:*', {
+                bot1.sendMessage(msgtitle.chat.id, '*Enter the language of the movie:*', {
                   parse_mode: 'Markdown'
                 });
 
-                bot.once('message', (msglang) => {
+                bot1.once('message', (msglang) => {
                   if (titleChatId === msglang.chat.id) {
                     lang = msglang.text;
                     const langChatId = msglang.chat.id;
-                    bot.sendMessage(msglang.chat.id, '*Enter the country of the movie:*', {
+                    bot1.sendMessage(msglang.chat.id, '*Enter the country of the movie:*', {
                       parse_mode: 'Markdown'
                     });
 
-                    bot.once('message', (msgcountry) => {
+                    bot1.once('message', (msgcountry) => {
                       if (langChatId === msgcountry.chat.id) {
                         country = msgcountry.text;
                         const countryChatId = msgcountry.chat.id;
-                        bot.sendMessage(msgcountry.chat.id, '*Enter the genre of the movie:*', {
+                        bot1.sendMessage(msgcountry.chat.id, '*Enter the genre of the movie:*', {
                           parse_mode: 'Markdown'
                         });
 
-                        bot.once('message', (msggenre) => {
+                        bot1.once('message', (msggenre) => {
                           if (countryChatId === msggenre.chat.id) {
                             genre = msggenre.text;
                             const genreChatId = msggenre.chat.id;
-                            bot.sendMessage(msggenre.chat.id, '*Enter the year of release of the movie:*', {
+                            bot1.sendMessage(msggenre.chat.id, '*Enter the year of release of the movie:*', {
                               parse_mode: 'Markdown'
                             });
 
-                            bot.once('message', (msgyearOfRelease) => {
+                            bot1.once('message', (msgyearOfRelease) => {
                               if (genreChatId === msgyearOfRelease.chat.id) {
                                 year = msgyearOfRelease.text;
                                 const yearOfReleaseChatId = msgyearOfRelease.chat.id;
-                                bot.sendMessage(msgyearOfRelease.chat.id, '*Enter the code of the movie:*', {
+                                bot1.sendMessage(msgyearOfRelease.chat.id, '*Enter the code of the movie:*', {
                                   parse_mode: 'Markdown'
                                 });
 
-                                bot.once('message', (msgcode) => {
+                                bot1.once('message', (msgcode) => {
                                   if (yearOfReleaseChatId === msgcode.chat.id) {
                                     code = msgcode.text;
                                     const codeChatId = msgcode.chat.id;
@@ -240,9 +254,9 @@ bot.on('message', (msg) => {
 
 function addNewMovie(chatId, code, url, imgPreview, title, lang, country, genre, year) {
 
-  bot.sendMessage(chatId, `The movie has been added with the code "${code}".`, { parse_mode: 'Markdown' });
+  bot1.sendMessage(chatId, `The movie has been added with the code "${code}".`, { parse_mode: 'Markdown' });
 
-  bot.sendPhoto(chatId, imgPreview, {
+  bot1.sendPhoto(chatId, imgPreview, {
     caption: `*🎬Movie Title: ${title.toUpperCase()}
 ______________________
 🇬🇧Language: ${lang.charAt(0).toUpperCase() + lang.slice(1).toLowerCase()};
@@ -263,7 +277,7 @@ ______________________
     disable_web_page_preview: true,
   });
 
-  bot.sendMessage(chatId, 'Is everything OK?\nDo you want to change anything?', {
+  bot1.sendMessage(chatId, 'Is everything OK?\nDo you want to change anything?', {
     reply_markup: {
       keyboard: [
         [
@@ -275,7 +289,7 @@ ______________________
       resize_keyboard: true
     }
   });
-  bot.on('message', async (msg) => {
+  bot1.on('message', async (msg) => {
     switch (msg.text) {
 
       default:
@@ -287,11 +301,11 @@ ______________________
 
 function changeElement(chatId, elName, variable) {
   return new Promise((resolve, reject) => {
-    bot.sendMessage(chatId, `Send me the new ${elName} to change:\n_or send /empty to remain it unchanged_`, { parse_mode: 'Markdown' });
+    bot1.sendMessage(chatId, `Send me the new ${elName} to change:\n_or send /empty to remain it unchanged_`, { parse_mode: 'Markdown' });
 
-    bot.once('message', async (put) => {
+    bot1.once('message', async (put) => {
       if (put.text.toLowerCase() === '/empty') {
-        bot.sendMessage(put.chat.id, `${elName} remains unchanged.`, {
+        bot1.sendMessage(put.chat.id, `${elName} remains unchanged.`, {
           reply_to_message_id: put.message_id
         });
         resolve(variable);
@@ -300,7 +314,7 @@ function changeElement(chatId, elName, variable) {
         try {
           // You can add additional validation for URL if needed
 
-          bot.sendMessage(put.chat.id, `Congratulations! You successfully updated ${elName}:\n<pre>${variable}</pre>`, {
+          bot1.sendMessage(put.chat.id, `Congratulations! You successfully updated ${elName}:\n<pre>${variable}</pre>`, {
             reply_to_message_id: put.message_id,
             parse_mode: 'HTML',
             reply_markup: {
@@ -314,7 +328,7 @@ function changeElement(chatId, elName, variable) {
           resolve(variable);
         } catch (error) {
           console.error(`Error updating ${elName}:`, error);
-          bot.sendMessage(put.chat.id, `Error updating ${elName}. Please try again.`, {
+          bot1.sendMessage(put.chat.id, `Error updating ${elName}. Please try again.`, {
             reply_to_message_id: put.message_id
           });
           reject(error);
@@ -326,13 +340,13 @@ function changeElement(chatId, elName, variable) {
 
 
 // Function to handle callback queries
-bot.on('message', async (m) => {
+bot1.on('message', async (m) => {
   const chatId = m.chat.id;
 
   switch (m.text) {
     case '✍️Yes, I want to change it':
     case '✍️back to change list':
-      bot.sendMessage(chatId, 'Choose which section you want to change:', {
+      bot1.sendMessage(chatId, 'Choose which section you want to change:', {
         reply_markup: {
           keyboard: [
             ['🔗URL', '🖼Image', '🇵🇸Language'],
@@ -390,7 +404,7 @@ bot.on('message', async (m) => {
 
         if (codeExists) {
           // If the code already exists, send a message to change the code
-          bot.sendMessage(chatId, 'Ops! The code is the same as one of the other movies.\nPlease change it :(', {
+          bot1.sendMessage(chatId, 'Ops! The code is the same as one of the other movies.\nPlease change it :(', {
             reply_markup: {
               inline_keyboard: [
                 [
@@ -434,7 +448,7 @@ bot.on('message', async (m) => {
           const postData = await postResponse.json();
 
           // Send success message to the user
-          bot.sendMessage(chatId, `You have successfully posted a new movie:\n<pre>${JSON.stringify(movie, null, 4)}</pre>`, {
+          bot1.sendMessage(chatId, `You have successfully posted a new movie:\n<pre>${JSON.stringify(movie, null, 4)}</pre>`, {
             parse_mode: 'HTML',
             reply_markup: {
               keyboard: [
@@ -453,10 +467,110 @@ bot.on('message', async (m) => {
         }
       } catch (error) {
         console.error('Error:', error);
-        bot.sendMessage(chatId, `Error posting the movie: ${error.message}`);
+        bot1.sendMessage(chatId, `Error posting the movie: ${error.message}`);
       }
       break;
     default:
       break;
+  }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// user.js
+bot2.onText(/\/start/, (msg) => {
+  const id = msg.chat.id;
+  const html = `<b>👋Hello, ${msg.from.first_name}!
+
+✍️Send me the code of the movie you're searching for. For example: 2021, 1221</b>`;
+  bot2.sendMessage(id, html, {
+    parse_mode: 'HTML',
+    disable_web_page_preview: true
+  });
+});
+
+bot2.on('message', async m => {
+  const chatId = m.chat.id;
+  if (m.text.length >= 4 && !isNaN(Number(m.text))) {
+    try {
+      // Check if the message is a number (potential movie ID)
+      const movieId = parseInt(m.text);
+      if (!isNaN(movieId)) {
+        const moviesResponse = await fetch(`http://localhost:3000/movies/${movieId}`);
+        if (moviesResponse.ok) {
+          const movie = await moviesResponse.json();
+
+          // Display movie information
+          bot2.sendPhoto(chatId, movie.imgPreview, {
+            caption: `*🎬Movie Title: ${movie.title.toUpperCase()}
+  ______________________
+  🇬🇧Language: ${movie.lang.charAt(0).toUpperCase() + movie.lang.slice(1).toLowerCase()};
+  🌐Country: ${movie.country.charAt(0).toUpperCase() + movie.country.slice(1).toLowerCase()};
+  🗓Released: ${movie.year};
+  🎞Genre: ${movie.genre};*`,
+            parse_mode: 'Markdown',
+            reply_markup: {
+              inline_keyboard: [
+                [
+                  {
+                    text: 'Watch here',
+                    url: movie.url
+                  }
+                ]
+              ]
+            },
+            disable_web_page_preview: true,
+          });
+        } else {
+          // Movie not found
+          bot2.sendMessage(chatId, 'Movie not found.');
+        }
+      } else {
+        // Invalid movie ID format
+        bot2.sendMessage(chatId, 'Invalid movie ID format.');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      bot2.sendMessage(chatId, `Error searching for the movie: ${error.message}`);
+    }
+  } else {
+    // Invalid movie ID format (length less than 4 or contains non-numeric characters)
+    bot2.sendMessage(chatId, 'Invalid movie ID format.');
   }
 });
