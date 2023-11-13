@@ -4,7 +4,7 @@
   "description": "",
   "main": "users.js",
   "scripts": {
-    "build": "./start.sh"
+    "build": "node admin.js && node users.js && json-server --watch db.json"
   },
   "author": "",
   "license": "ISC",
