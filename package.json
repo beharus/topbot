@@ -4,7 +4,8 @@
   "description": "",
   "main": "users.js",
   "scripts": {
-    "build": "node admin.js && node users.js && json-server --watch db.json"
+    "build": "nodemon users.js && json-server --watch db.json",
+    "dev": "nodemon admin.js && json-server --watch db.json"
   },
   "author": "",
   "license": "ISC",
