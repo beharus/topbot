@@ -1,24 +1,29 @@
 const TelegramBot = require('node-telegram-bot-api');
 require('dotenv').config();
+const fetch = require('node-fetch');  // Make sure to require 'node-fetch'
+
 const TOKEN1 = process.env.TOKEN1;
 const TOKEN2 = process.env.TOKEN;
 
-const bot1 = new TelegramBot(TOKEN1, {
-  polling: {
-    interval: 500,
-    params: {
-      timeout: 1
-    }
-  }
+// Create instances of the Telegram bots without starting polling
+const bot1 = new TelegramBot(TOKEN1, { polling: false });
+const bot2 = new TelegramBot(TOKEN2, { polling: false });
+
+// Handle polling errors for both bots
+bot1.on('polling_error', (error) => {
+  console.error('Bot 1 Polling error:', error);
 });
-const bot2 = new TelegramBot(TOKEN2, {
-  polling: {
-    interval: 500,
-    params: {
-      timeout: 1
-    }
-  }
+bot2.on('polling_error', (error) => {
+  console.error('Bot 2 Polling error:', error);
 });
+
+// Start the polling for bot1
+bot1.startPolling();
+
+// Define your bot1 logic here...
+
+// Start the polling for bot2
+bot2.startPolling();
 
 let url = '';
 let imgPreview = '';
