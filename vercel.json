@@ -1,0 +1,5 @@
+{
+  "version": 2,
+  "builds": [{ "src": "admin.js", "use": "@now/node" }],
+  "routes": [{ "src": "/.*", "dest": "/admin.js" }]
+}

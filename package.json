@@ -5,7 +5,9 @@
   "main": "admin.js",
   "scripts": {
     "build": "node admin.js && json-server --watch db.json",
-    "start": "nodemon admin.js && json-server --watch db.json"
+    "start": "nodemon admin.js && json-server --watch db.json",
+    "dev": "json-server --watch db.json",
+    "vercel-build": "node admin.js && json-server --watch db.json"
   },
   "author": "",
   "license": "ISC",
