@@ -4,7 +4,8 @@
   "description": "",
   "main": "admin.js",
   "scripts": {
-    "start": "nodemon admin.js"
+    "start": "node admin.js",
+    "dev": "nodemon admin.js"
   },
   "author": "",
   "license": "ISC",
