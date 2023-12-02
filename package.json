@@ -4,16 +4,14 @@
   "description": "",
   "main": "admin.js",
   "scripts": {
-    "build": "node admin.js && json-server --watch db.json",
-    "start": "nodemon admin.js && json-server --watch db.json",
-    "dev": "json-server --watch db.json",
-    "vercel-build": "node admin.js && json-server --watch db.json"
+    "start": "nodemon admin.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "dotenv": "^16.3.1",
     "json-server": "^0.17.4",
+    "mongodb": "^6.3.0",
     "node-telegram-bot-api": "^0.64.0"
   },
   "devDependencies": {
