@@ -2,10 +2,10 @@
   "name": "project2",
   "version": "1.0.0",
   "description": "",
-  "main": "admin.js",
+  "main": "index.js",
   "scripts": {
-    "start": "node admin.js",
-    "dev": "nodemon admin.js"
+    "start": "node index.js",
+    "dev": "nodemon index.js"
   },
   "author": "",
   "license": "ISC",
