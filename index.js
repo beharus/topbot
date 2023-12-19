@@ -2,6 +2,7 @@ const TelegramBot = require('node-telegram-bot-api');
 const { MongoClient } = require('mongodb');
 require('dotenv').config();
 
+
 const TOKEN = process.env.TOKEN;
 const MONGODB_URL = process.env.MONGODB_URL;
 const client = new MongoClient(MONGODB_URL, {
@@ -361,12 +362,3 @@ function changeElement(chatId, elName, variable) {
     });
   });
 }
-
-
-
-
-        // // Your MongoDB operations here
-        // await client.db('telegrambot').createCollection('user');
-        // let user = client.db('telegrambot').collection('user');
-        // await user.insertOne({ name: 'ulbitv' });
-        // console.log(await user.findOne({ name: 'ulbitv' }));
